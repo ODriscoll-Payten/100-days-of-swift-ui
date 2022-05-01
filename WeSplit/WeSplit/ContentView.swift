@@ -12,6 +12,8 @@ struct ContentView: View {
     @State private var numberOfPeople = 2
     @State private var tipPercentage = 20
     @FocusState private var amountIsFocused: Bool
+  
+    
     let tipPercentages = [10, 15, 20, 25, 0]
     
     var totalPerPerson: Double {
@@ -19,10 +21,24 @@ struct ContentView: View {
         let tipSelection = Double(tipPercentage)
        
         let tipValue = checkAmount / 100 * tipSelection
+        
         let grandTotal = checkAmount + tipValue
         let amountPerPerson = grandTotal / peopleCount
+       
         
         return amountPerPerson
+
+    }
+    
+    var grandTotal: Double {
+        let peopleCount =  Double(numberOfPeople + 2)
+        let tipSelection = Double(tipPercentage)
+       
+        let tipValue = checkAmount / 100 * tipSelection
+        
+        let grandTotal = checkAmount + tipValue
+        
+        return grandTotal
     }
     
     var body: some View {
@@ -51,9 +67,20 @@ struct ContentView: View {
                     Text("how much tip do you want to leave?")
                 }
                 
+                
+                Section{
+                    Text(grandTotal, format: .currency(code: Locale.current.currencyCode ?? "USD"))
+                } header: {
+                    Text("Grand total")
+                }
+                
+                
                 Section{
                     Text(totalPerPerson, format: .currency(code: Locale.current.currencyCode ?? "USD"))
+                }header: {
+                    Text("Amount per person")
                 }
+                
             }
             .navigationTitle("WeSplit")
             .toolbar {
