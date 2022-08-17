@@ -91,7 +91,7 @@ struct ContentView: View {
             
             
             Section{
-                Text("\(finalNumber)")
+                Text("\(finalNumber.formatted())")
                 
                 Picker(selection: $outputSelected, label: Text("Picker")) {
                     ForEach(0..<unitsOfTime.count, id: \.self) { index in
