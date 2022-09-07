@@ -12,6 +12,7 @@ struct ContentView: View {
     @State private var sleepAmount = 8.0
     @State private var coffeeAmount = 1
     
+    
     @State private var alertTitle = ""
     @State private var alertMessage = ""
     @State private var showingAlert = false
@@ -25,26 +26,35 @@ struct ContentView: View {
     var body: some View {
         NavigationView{
             Form{
-                VStack(alignment: .leading, spacing: 0) {
-                Text("When do you want to wake up?")
-                    .font(.headline)
+                Section("When do you want to wake up?") {
+                
                 
                 DatePicker("Please enter a time", selection: $wakeUp, displayedComponents: .hourAndMinute)
                     .labelsHidden()
                 }
+                .font(.headline)
                 
-                VStack(alignment: .leading, spacing: 0) {
-                Text("Desired amount of sleep")
-                    .font(.headline)
+                Section("Desired amount of sleep") {
                 
                 Stepper("\(sleepAmount.formatted()) hours", value: $sleepAmount, in: 4...12, step: 0.25)
                 }
+                .font(.headline)
                 
-                VStack(alignment: .leading, spacing: 0) {
-                Text("Daily coffee intake")
-                    .font(.headline)
+                Section("Daily coffee intake") {
+               
+                    Picker("Coffee", selection: $coffeeAmount) {
+                        
+                        ForEach(1...10, id: \.self) { number in
+                            Text("\(number)")
+                        }
+                    }
+                    .pickerStyle(.automatic)
+                }
+                .font(.headline)
                 
-                Stepper(coffeeAmount == 1 ? "1 cup" : "\(coffeeAmount) cups", value: $coffeeAmount, in: 1...20)
+                Section("Reccomended Bedtime") {
+                    Text("\(alertMessage)")
+                        
                 }
             }
             .navigationTitle("Better Rest")
@@ -77,7 +87,7 @@ struct ContentView: View {
             alertTitle = "Error"
             alertMessage = "Sorry there was a problem calculating your bedtime."
         }
-        showingAlert = true
+        
     }
 }
 
