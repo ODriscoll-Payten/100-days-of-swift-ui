@@ -16,9 +16,16 @@ struct ContentView: View {
     @State private var errorMessage = ""
     @State private var showingError = false
     
+    @State private var score = 0
+    
     var body: some View {
         NavigationView {
             List {
+                
+                Section {
+                    Text("\(score)")
+                }
+                
                 Section {
                     TextField("Enter your word", text: $newWord)
                         .autocapitalization(.none)
@@ -35,6 +42,16 @@ struct ContentView: View {
                 }
             }
             .navigationTitle(rootWord)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        startGame()
+                    }, label: {
+                        Text("New Word")
+                    })
+                }
+            }
+            
             .onSubmit(addNewWord)
             .onAppear(perform: startGame)
             .alert(errorTitle, isPresented: $showingError) {
@@ -43,6 +60,7 @@ struct ContentView: View {
                 Text(errorMessage)
             }
         }
+        
     }
     
     func addNewWord() {
@@ -64,6 +82,13 @@ struct ContentView: View {
             return
         }
         
+        guard isLongEnough(word: answer) else {
+            wordError(title: "Word too short", message: "Your word must be longer than 3 characters. And it cannot be the same as the challenge word")
+            return
+        }
+        
+        calculateScore(word: answer)
+        
         withAnimation {
             usedWords.insert(answer, at: 0)
         }
@@ -71,6 +96,8 @@ struct ContentView: View {
     }
     
     func startGame() {
+        score = 0
+        usedWords.removeAll()
         if let startWordsUrl = Bundle.main.url(forResource: "start", withExtension: "txt") {
             if let startWords = try? String(contentsOf: startWordsUrl) {
                 let allWords = startWords.components(separatedBy: "\n")
@@ -106,6 +133,26 @@ struct ContentView: View {
         let misspelledRange = checker.rangeOfMisspelledWord(in: word, range: range, startingAt: 0, wrap: false, language: "en")
         
         return misspelledRange.location == NSNotFound
+    }
+    
+    func isLongEnough(word: String) -> Bool {
+        guard word.count >= 3 else {
+            return false
+        }
+        
+        guard word != rootWord else {
+            return false
+        }
+        
+        return true
+    }
+    
+    func calculateScore(word: String)  {
+        let base = 5
+        let wordCt = word.count
+        let newScore = base + wordCt
+        
+        score += newScore
     }
     
     func wordError(title: String, message: String) {
