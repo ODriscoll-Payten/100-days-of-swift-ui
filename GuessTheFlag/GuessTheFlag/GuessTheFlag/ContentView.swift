@@ -13,6 +13,7 @@ struct ContentView: View {
     @State private var scoreTitle = ""
     @State private var score = 0
     @State private var questionsAsked = 0
+    @State private var animationAmount: Double = 360
     
     
     @State private var countries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Nigeria", "Poland", "Russia", "Spain", "UK", "US"].shuffled()
@@ -54,13 +55,16 @@ struct ContentView: View {
                             .clipShape(Capsule())
                             .shadow(radius: 5)
                     }
+                    .rotation3DEffect(.degrees(number == correctAnswer ? animationAmount: 0), axis: (x: 0, y: 1, z: 0))
+                    
                 }
+                
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 20)
             .background(.regularMaterial)
             .clipShape(RoundedRectangle(cornerRadius: 20))
-                
+            
                 Spacer()
                 Spacer()
                 
@@ -86,10 +90,14 @@ struct ContentView: View {
     }
     
     func flagTapped(_ number: Int) {
+        
         questionsAsked += 1
         if number == correctAnswer {
             scoreTitle = "Correct"
             score += 1
+            withAnimation{
+                self.animationAmount += 360
+            }
         } else {
             scoreTitle = "Wrong, thats the flag of \(countries[number]) "
             
